@@ -28,7 +28,7 @@ RUN apt-get -y dist-upgrade
 
 RUN apt-get -y install libavcodec-extra-53 libavformat-extra-53 libavutil-extra-51 libpostproc-extra-52 libswscale-extra-2 libtheora0 libvorbis0a libvorbisenc2 libvorbisfile3
 RUN apt-get -y install libvpx1 libxvidcore4 vpx-tools mencoder faad sox libpostproc-extra-52 libswscale-extra-2 libcharls1 libjasper1 libjpeg-turbo8 libjpeg62 libjpeg8 libopenjpeg2 libturbojpeg 
-RUN apt-get -y install ffmpeg gstreamer0.10-ffmpeg libxine1-ffmpeg libxine2-ffmpeg libvisual-0.4-plugins libglide3 faac libfaac0 ffmpeg2theora alac-decoder flac yamdi
+RUN apt-get -y install libvisual-0.4-plugins libglide3 faac libfaac0 alac-decoder flac yamdi
 RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp
 
 RUN wget http://www.cmake.org/files/v3.0/cmake-3.0.0.tar.gz
@@ -49,8 +49,15 @@ WORKDIR yasm-1.2.0
 RUN ./configure && make -j2 install
 WORKDIR /tmp
 
-RUN git clone https://github.com/pyke369/sffmpeg
-WORKDIR sffmpeg
+RUN apt-get -y remove 'ffmpeg*'
+RUN apt-get -y autoremove
+#RUN apt-get -y install devscripts debhelper dh-make curl
+#RUN git clone https://github.com/pyke369/sffmpeg
+#WORKDIR sffmpeg
+#make distclean
+#make -j2
+ADD http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.latest.tar.gz /tmp/
+RUN tar -xvf ffmpeg.static.64bit.latest.tar.gz && mv ffmpeg ffprobe /usr/local/bin
 
 WORKDIR /tmp
 
@@ -99,6 +106,45 @@ RUN easy_install supervisor-stdout
 RUN mkdir /var/log/supervisor
 ADD supervisord.conf /etc/supervisord.conf
 
+WORKDIR /tmp
+RUN apt-get install -y libass4 libenca-dev libfontconfig1-dev libfribidi-dev libgpac1 libogg-dev checkinstall libass-dev libass4 libenca-dev libfaac-dev libfontconfig1-dev libfribidi-dev libgpac-dev libgpac1 libmp3lame-dev libogg-dev libopencore-amrnb-dev
+RUN apt-get install -y libopencore-amrwb-dev libtheora-dev libvorbis-dev texi2html
+
+#x264
+RUN git clone --depth 1 git://git.videolan.org/x264
+WORKDIR x264
+RUN ./configure --enable-static && make -j2
+RUN checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh |  awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes  --fstrans=no --default
+
+#fdk-aac
+WORKDIR /tmp
+RUN git clone --depth 1 git://github.com/mstorsjo/fdk-aac.git
+WORKDIR fdk-aac
+RUN autoreconf -fiv && ./configure --disable-shared && make -j2
+RUN checkinstall --pkgname=fdk-aac --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no  --deldoc=yes --fstrans=no --default
+
+#libvpx
+WORKDIR /tmp
+RUN git clone -q --depth 1 https://chromium.googlesource.com/webm/libvpx
+WORKDIR libvpx
+RUN ./configure --disable-examples --disable-unit-tests && make -j2
+RUN checkinstall --pkgname=libvpx --pkgversion="1:$(date +%Y%m%d%H%M)-git" --backup=no  --deldoc=yes --fstrans=no --default
+
+#opus
+WORKDIR /tmp
+RUN git clone --depth 1 git://git.xiph.org/opus.git
+WORKDIR opus
+RUN ./autogen.sh && ./configure --disable-shared && make -j2
+RUN checkinstall --pkgname=libopus --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no  --deldoc=yes --fstrans=no --default
+
+#ffmpeg
+WORKDIR /tmp
+RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg
+WORKDIR ffmpeg
+RUN ./configure --enable-gpl --enable-libass --enable-libfaac --enable-libfdk-aac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-librtmp --enable-libtheora  --enable-libvorbis --enable-libvpx --enable-libx264 --enable-nonfree --enable-version3
+RUN make -j2 && sudo checkinstall --pkgname=ffmpeg --pkgversion="7:$(date +%Y%m%d%H%M)-git" --backup=no  --deldoc=yes --fstrans=no --default
+RUN hash -r
+
 RUN apt-get -f install
 RUN apt-get -y autoremove
 RUN apt-get -y autoclean
@@ -106,5 +152,4 @@ RUN apt-get -y clean
 
 EXPOSE 80
 ENV DEBIAN_FRONTEND dialog
-CMD ["ls /wwwroot"]
 CMD ["/usr/local/bin/supervisord"]
