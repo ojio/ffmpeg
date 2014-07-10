@@ -34,7 +34,8 @@ RUN apt-get -y install php5-cli php5-curl php5-fpm php5-gd php5-imagick php5-mcr
 
 #MYSql
 RUN apt-get -y install mysql-server
-RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+RUN sed -i -e "s/^datadir\s*=\s*\/var\/lib\/mysql/datadir=\/mysql/" /etc/mysql/my.cnf
 
 
 
@@ -59,6 +60,8 @@ RUN sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /
 ADD default.nginx.conf /tmp/
 RUN mv /tmp/default.nginx.conf /etc/nginx/sites-available/default
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN mkdir -p /wwwroot/default
+RUN chown www-data:www-data /wwwroot -R
 #RUN sed -i -e "s/server_name localhost;server_name name_here/g" /etc/nginx/sites-available/default
 
 #SUPERVISORD
