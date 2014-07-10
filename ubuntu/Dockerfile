@@ -108,7 +108,7 @@ ADD supervisord.conf /etc/supervisord.conf
 RUN apt-get update
 RUN apt-get -y upgrade
 RUN apt-get -f install
-RUN apt-get autoremove
+RUN apt-get -y autoremove
 RUN apt-get -y autoclean
 RUN apt-get -y clean
 
