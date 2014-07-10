@@ -6,14 +6,21 @@ WORKDIR /tmp
 
 RUN sed -i "/^# deb .*partner/ s/^# //" /etc/apt/sources.list
 RUN echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list
+RUN apt-get -y install software-properties-common wget python-software-properties pkg-config
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt-get update
-RUN apt-get -y install python-software-properties software-properties-common wget htop gcc bison re2c make binutils pkg-config vim sudo man rubygems  python-pip
+RUN apt-get -y install htop bison re2c make binutils vim sudo man rubygems  python-pip
 
 RUN wget http://archive.getdeb.net/install_deb/getdeb-repository_0.1-1~getdeb1_all.deb
 RUN dpkg -i getdeb-repository_0.1-1~getdeb1_all.deb
 RUN rm -f /tmp/getdeb-repository_0.1-1~getdeb1_all.deb
 RUN add-apt-repository -y ppa:videolan/stable-daily
 RUN sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
+RUN apt-get -y install mercurial git cmake cron cronutils anacron libncurses5-dev libfreetype6-dev libboost-all-dev libqt4-dev libgdal1-dev p7zip-full
+RUN apt-get -y install libgmp-dev libmpfr-dev libmpc-dev libc6-dev build-essential gcc-4.8 g++-4.8 gfortran-4.8 libc6-dev-i386 xmlto xmltoman unzip libstdc++-4.8-dev
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+RUN update-alternatives --install /usr/bin/gfortran gfortarn /usr/bin/gfortran-4.8 50
 
 RUN apt-get update
 RUN apt-get -y upgrade
@@ -24,8 +31,28 @@ RUN apt-get -y install libvpx1 libxvidcore4 vpx-tools mencoder faad sox libpostp
 RUN apt-get -y install ffmpeg gstreamer0.10-ffmpeg libxine1-ffmpeg libxine2-ffmpeg libvisual-0.4-plugins libglide3 faac libfaac0 ffmpeg2theora alac-decoder flac yamdi
 RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp
 
-#RUN yum -y install libwebp-tools gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer gstreamer-rtsp gstreamer-ffmpeg gstreamer-tools
-#RUN yum -y install ffmpeg ffmpeg-libs ImageMagick mencoder oggconvert oggvideotools ogmtools gd-progs
+RUN wget http://www.cmake.org/files/v3.0/cmake-3.0.0.tar.gz
+RUN tar -xvf cmake-3.0.0.tar.gz
+WORKDIR cmake-3.0.0
+RUN mkdir __build
+WORKDIR __build
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+RUN make -j2
+RUN cpack -G DEB
+RUN apt-get -y remove 'cmake*'
+RUN dpkg -i cmake*.deb
+WORKDIR /tmp
+
+RUN wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
+RUN tar -xvf yasm-1.2.0.tar.gz
+WORKDIR yasm-1.2.0
+RUN ./configure && make -j2 install
+WORKDIR /tmp
+
+RUN git clone https://github.com/pyke369/sffmpeg
+WORKDIR sffmpeg
+
+WORKDIR /tmp
 
 RUN gem install flvtool2
 
@@ -41,11 +68,6 @@ RUN sed -i -e "s/;listen.owner = www-data/listen.owner = www-data/" /etc/php5/fp
 RUN sed -i -e "s/;listen.group = www-data/listen.group = www-data/" /etc/php5/fpm/pool.d/www.conf
 RUN sed -i -e "s/;listen.mode = 0660/listen.mode = 0660/" /etc/php5/fpm/pool.d/www.conf
 
-RUN apt-get -f install
-RUN apt-get autoremove
-RUN apt-get -y autoclean
-RUN apt-get -y clean
-
 #PHP
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/output_buffering = 4096/output_buffering = Off/g" /etc/php5/fpm/php.ini
@@ -56,6 +78,10 @@ RUN sed -i -e "s/max_execution_time = 30/max_execution_time = 1800/g" /etc/php5/
 RUN sed -i -e "s/max_input_time = 60/max_input_time = 1800/g" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /etc/php5/fpm/pool.d/www.conf
+
+ADD ioncube_loader_lin_5.3.so /usr/lib/php5/20090626/
+RUN echo "zend_extension = /usr/lib/php5/20090626/ioncube_loader_lin_5.3.so" > /etc/php5/fpm/conf.d/20-ioncube.ini
+
 
 #NGINX
 ADD default.nginx.conf /tmp/default.nginx.conf
@@ -72,6 +98,11 @@ RUN easy_install supervisor
 RUN easy_install supervisor-stdout
 RUN mkdir /var/log/supervisor
 ADD supervisord.conf /etc/supervisord.conf
+
+RUN apt-get -f install
+RUN apt-get -y autoremove
+RUN apt-get -y autoclean
+RUN apt-get -y clean
 
 EXPOSE 80
 ENV DEBIAN_FRONTEND dialog
