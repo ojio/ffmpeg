@@ -29,15 +29,17 @@ RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 
 
 RUN gem install flvtool2
 
-#PHP
-RUN apt-get -y install php5-cli php5-curl php5-fpm php5-gd php5-imagick php5-mcrypt php5-memcache php5-mysqlnd php5-tidy php-pear nginx-extras 
-
 #MYSql
 RUN apt-get -y install mysql-server
 RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 RUN sed -i -e "s/^datadir\s*=\s*\/var\/lib\/mysql/datadir=\/mysql/" /etc/mysql/my.cnf
 
-
+#PHP
+RUN apt-get -y install php5-cli php5-curl php5-fpm php5-gd php5-imagick php5-mcrypt php5-memcache php5-mysqlnd php5-tidy php-pear nginx-extras
+RUN sed -i -e "s/listen = 127.0.0.1:9000/listen=\/var\/run\/php5-fpm.sock/" /etc/php5/fpm/pool.d/www.conf
+RUN sed -i -e "s/;listen.owner = www-data/listen.owner = www-data/" /etc/php5/fpm/pool.d/www.conf
+RUN sed -i -e "s/;listen.group = www-data/listen.group = www-data/" /etc/php5/fpm/pool.d/www.conf
+RUN sed -i -e "s/;listen.mode = 0660/listen.mode = 0660/" /etc/php5/fpm/pool.d/www.conf
 
 RUN apt-get -f install
 RUN apt-get autoremove
@@ -55,13 +57,14 @@ RUN sed -i -e "s/max_input_time = 60/max_input_time = 1800/g" /etc/php5/fpm/php.
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /etc/php5/fpm/pool.d/www.conf
 
-
 #NGINX
-ADD default.nginx.conf /tmp/
-RUN mv /tmp/default.nginx.conf /etc/nginx/sites-available/default
+ADD default.nginx.conf /tmp/default.nginx.conf
+#RUN rm -f /etc/nginx/sites-available/default
+#RUN rm -f /etc/nginx/sites-enabled/default
+RUN mv -f /tmp/default.nginx.conf /etc/nginx/sites-enabled/default
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-RUN mkdir -p /wwwroot/default
-RUN chown www-data:www-data /wwwroot -R
+#RUN mkdir -p /wwwroot/default
+#RUN chown www-data:www-data /wwwroot -R
 #RUN sed -i -e "s/server_name localhost;server_name name_here/g" /etc/nginx/sites-available/default
 
 #SUPERVISORD
@@ -72,4 +75,5 @@ ADD supervisord.conf /etc/supervisord.conf
 
 EXPOSE 80
 ENV DEBIAN_FRONTEND dialog
+CMD ["ls /wwwroot"]
 CMD ["/usr/local/bin/supervisord"]
