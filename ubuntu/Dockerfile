@@ -22,7 +22,7 @@ RUN apt-get -y dist-upgrade
 RUN apt-get -y install libavcodec-extra-53 libavformat-extra-53 libavutil-extra-51 libpostproc-extra-52 libswscale-extra-2 libtheora0 libvorbis0a libvorbisenc2 libvorbisfile3
 RUN apt-get -y install libvpx1 libxvidcore4 vpx-tools mencoder faad sox libpostproc-extra-52 libswscale-extra-2 libcharls1 libjasper1 libjpeg-turbo8 libjpeg62 libjpeg8 libopenjpeg2 libturbojpeg 
 RUN apt-get -y install ffmpeg gstreamer0.10-ffmpeg libxine1-ffmpeg libxine2-ffmpeg libvisual-0.4-plugins libglide3 faac libfaac0 ffmpeg2theora alac-decoder flac yamdi
-RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp
+RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp unzip 
 
 #RUN yum -y install libwebp-tools gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer gstreamer-rtsp gstreamer-ffmpeg gstreamer-tools
 #RUN yum -y install ffmpeg ffmpeg-libs ImageMagick mencoder oggconvert oggvideotools ogmtools gd-progs
@@ -47,6 +47,7 @@ RUN apt-get -y autoclean
 RUN apt-get -y clean
 
 #PHP
+ADD ioncube_loader_lin_5.3.so /usr/lib/php5/20090626/
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/output_buffering = 4096/output_buffering = Off/g" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/register_argc_argv = Off/register_argc_argv = On/g" /etc/php5/fpm/php.ini
@@ -56,6 +57,7 @@ RUN sed -i -e "s/max_execution_time = 30/max_execution_time = 1800/g" /etc/php5/
 RUN sed -i -e "s/max_input_time = 60/max_input_time = 1800/g" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /etc/php5/fpm/pool.d/www.conf
+RUN echo "zend_extension = /usr/lib/php5/20090626/ioncube_loader_lin_5.3.so" > /etc/php5/fpm/conf.d/20-ioncube.ini
 
 #NGINX
 ADD default.nginx.conf /tmp/default.nginx.conf
@@ -75,5 +77,4 @@ ADD supervisord.conf /etc/supervisord.conf
 
 EXPOSE 80
 ENV DEBIAN_FRONTEND dialog
-CMD ["ls /wwwroot"]
 CMD ["/usr/local/bin/supervisord"]
