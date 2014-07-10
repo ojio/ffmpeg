@@ -7,7 +7,9 @@ WORKDIR /tmp
 RUN sed -i "/^# deb .*partner/ s/^# //" /etc/apt/sources.list
 RUN echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get -y install python-software-properties software-properties-common wget htop gcc bison re2c make binutils pkg-config vim sudo man rubygems  python-pip
+RUN apt-get -y install python-software-properties software-properties-common wget htop bison re2c make binutils pkg-config vim sudo man rubygems python-pip 
+RUN apt-get -y install mercurial git cmake cron cronutils anacron libncurses5-dev libfreetype6-dev libboost-all-dev libqt4-dev libgdal1-dev p7zip-full
+RUN apt-get -y install libgmp-dev libmpfr-dev libmpc-dev libc6-dev gcc g++ gfortran libc6-dev-i386
 
 RUN wget http://archive.getdeb.net/install_deb/getdeb-repository_0.1-1~getdeb1_all.deb
 RUN dpkg -i getdeb-repository_0.1-1~getdeb1_all.deb
@@ -21,13 +23,38 @@ RUN apt-get -y dist-upgrade
 
 RUN apt-get -y install libavcodec-extra-53 libavformat-extra-53 libavutil-extra-51 libpostproc-extra-52 libswscale-extra-2 libtheora0 libvorbis0a libvorbisenc2 libvorbisfile3
 RUN apt-get -y install libvpx1 libxvidcore4 vpx-tools mencoder faad sox libpostproc-extra-52 libswscale-extra-2 libcharls1 libjasper1 libjpeg-turbo8 libjpeg62 libjpeg8 libopenjpeg2 libturbojpeg 
-RUN apt-get -y install ffmpeg gstreamer0.10-ffmpeg libxine1-ffmpeg libxine2-ffmpeg libvisual-0.4-plugins libglide3 faac libfaac0 ffmpeg2theora alac-decoder flac yamdi
-RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp unzip 
-
-#RUN yum -y install libwebp-tools gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer gstreamer-rtsp gstreamer-ffmpeg gstreamer-tools
-#RUN yum -y install ffmpeg ffmpeg-libs ImageMagick mencoder oggconvert oggvideotools ogmtools gd-progs
+RUN apt-get -y install libvisual-0.4-plugins libglide3 faac libfaac0 alac-decoder flac yamdi libfftw3-dev libaacs-dev
+RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp unzip xmlto xmltoman 
 
 RUN gem install flvtool2
+
+#GCC
+ADD gcc-4.8.3.tar.gz
+WORKDIR gcc-4.8.3
+RUN ./configure &&  make -j2 profiledbootstrap
+
+
+#Cmake
+RUN wget http://www.cmake.org/files/v3.0/cmake-3.0.0.tar.gz
+RUN tar -xvf cmake-3.0.0.tar.gz
+WORKDIR cmake-3.0.0
+RUN mkdir __build
+WORKDIR __build
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+RUN make -j3
+RUN cpack -G DEB
+RUN apt-get -y remove 'cmake*'
+RUN dpkg -i cmake*.deb
+
+WORKDIR /tmp
+
+#yasm
+RUN wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
+RUN tar -xvf yasm-1.2.0.tar.gz
+WORKDIR yasm-1.2.0
+RUN ./configure && make install
+
+WORKDIR /tmp
 
 #MYSql
 RUN apt-get -y install mysql-server
@@ -68,6 +95,11 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 #RUN mkdir -p /wwwroot/default
 #RUN chown www-data:www-data /wwwroot -R
 #RUN sed -i -e "s/server_name localhost;server_name name_here/g" /etc/nginx/sites-available/default
+
+#Build FFMPEG From Source
+RUN git clone https://github.com/pyke369/sffmpeg
+WORKDIR sffmpeg
+RUN make -j4 
 
 #SUPERVISORD
 RUN easy_install supervisor
