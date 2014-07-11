@@ -1,65 +1,10 @@
-FROM ubuntu:12.04
+FROM aquariusinteractive/dev-ubuntu-204
 MAINTAINER Aquarius Interactive <m@aquariusinteractive.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /tmp
 
-RUN sed -i "/^# deb .*partner/ s/^# //" /etc/apt/sources.list
-RUN echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list
-RUN apt-get -y install software-properties-common wget python-software-properties pkg-config
-RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
-RUN apt-get update
-RUN apt-get -y install htop bison re2c make binutils vim sudo man rubygems  python-pip
-
-RUN wget http://archive.getdeb.net/install_deb/getdeb-repository_0.1-1~getdeb1_all.deb
-RUN dpkg -i getdeb-repository_0.1-1~getdeb1_all.deb
-RUN rm -f /tmp/getdeb-repository_0.1-1~getdeb1_all.deb
-RUN add-apt-repository -y ppa:videolan/stable-daily
-RUN sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
-RUN apt-get -y install mercurial git cmake cron cronutils anacron libncurses5-dev libfreetype6-dev libboost-all-dev libqt4-dev libgdal1-dev p7zip-full
-RUN apt-get -y install libgmp-dev libmpfr-dev libmpc-dev libc6-dev build-essential gcc-4.8 g++-4.8 gfortran-4.8 libc6-dev-i386 xmlto xmltoman unzip libstdc++-4.8-dev
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
-RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
-RUN update-alternatives --install /usr/bin/gfortran gfortarn /usr/bin/gfortran-4.8 50
-
-RUN apt-get update
-RUN apt-get -y upgrade
-RUN apt-get -y dist-upgrade
-
-RUN apt-get -y install libavcodec-extra-53 libavformat-extra-53 libavutil-extra-51 libpostproc-extra-52 libswscale-extra-2 libtheora0 libvorbis0a libvorbisenc2 libvorbisfile3
-RUN apt-get -y install libvpx1 libxvidcore4 vpx-tools mencoder faad sox libpostproc-extra-52 libswscale-extra-2 libcharls1 libjasper1 libjpeg-turbo8 libjpeg62 libjpeg8 libopenjpeg2 libturbojpeg 
-RUN apt-get -y install libvisual-0.4-plugins libglide3 faac libfaac0 alac-decoder flac yamdi
 RUN apt-get -y install imagemagick libmagickcore4-extra libmagickwand4 libwebp2 webp
-
-RUN wget http://www.cmake.org/files/v3.0/cmake-3.0.0.tar.gz
-RUN tar -xvf cmake-3.0.0.tar.gz
-WORKDIR cmake-3.0.0
-RUN mkdir __build
-WORKDIR __build
-RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-RUN make -j2
-RUN cpack -G DEB
-RUN apt-get -y remove 'cmake*'
-RUN dpkg -i cmake*.deb
-WORKDIR /tmp
-
-RUN wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
-RUN tar -xvf yasm-1.2.0.tar.gz
-WORKDIR yasm-1.2.0
-RUN ./configure && make -j2 install
-WORKDIR /tmp
-
-RUN apt-get -y remove 'ffmpeg*'
-RUN apt-get -y autoremove
-#RUN apt-get -y install devscripts debhelper dh-make curl
-#RUN git clone https://github.com/pyke369/sffmpeg
-#WORKDIR sffmpeg
-#make distclean
-#make -j2
-ADD http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.latest.tar.gz /tmp/
-RUN tar -xvf ffmpeg.static.64bit.latest.tar.gz && mv ffmpeg ffprobe /usr/local/bin
-
-WORKDIR /tmp
 
 RUN gem install flvtool2
 
@@ -91,13 +36,11 @@ RUN echo "zend_extension = /usr/lib/php5/20090626/ioncube_loader_lin_5.3.so" > /
 
 
 #NGINX
-ADD default.nginx.conf /tmp/default.nginx.conf
+#ADD default.nginx.conf /tmp/default.nginx.conf
 #RUN rm -f /etc/nginx/sites-available/default
 #RUN rm -f /etc/nginx/sites-enabled/default
-RUN mv -f /tmp/default.nginx.conf /etc/nginx/sites-enabled/default
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-#RUN mkdir -p /wwwroot/default
-#RUN chown www-data:www-data /wwwroot -R
+#RUN mv -f /tmp/default.nginx.conf /etc/nginx/sites-enabled/default
+#RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 #RUN sed -i -e "s/server_name localhost;server_name name_here/g" /etc/nginx/sites-available/default
 
 #SUPERVISORD
@@ -113,7 +56,7 @@ RUN apt-get install -y libopencore-amrwb-dev libtheora-dev libvorbis-dev texi2ht
 #x264
 RUN git clone --depth 1 git://git.videolan.org/x264
 WORKDIR x264
-RUN ./configure --enable-static && make -j2
+RUN ./configure --enable-static --enable-shared && make -j2
 RUN checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh |  awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes  --fstrans=no --default
 
 #fdk-aac
@@ -136,6 +79,7 @@ RUN git clone --depth 1 git://git.xiph.org/opus.git
 WORKDIR opus
 RUN ./autogen.sh && ./configure --disable-shared && make -j2
 RUN checkinstall --pkgname=libopus --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no  --deldoc=yes --fstrans=no --default
+RUN ldconfig
 
 #ffmpeg
 WORKDIR /tmp
@@ -145,10 +89,10 @@ RUN ./configure --enable-gpl --enable-libass --enable-libfaac --enable-libfdk-aa
 RUN make -j2 && sudo checkinstall --pkgname=ffmpeg --pkgversion="7:$(date +%Y%m%d%H%M)-git" --backup=no  --deldoc=yes --fstrans=no --default
 RUN hash -r
 
-RUN apt-get -f install
-RUN apt-get -y autoremove
-RUN apt-get -y autoclean
-RUN apt-get -y clean
+#RUN apt-get -f install
+#RUN apt-get -y autoremove
+#RUN apt-get -y autoclean
+#RUN apt-get -y clean
 
 EXPOSE 80
 ENV DEBIAN_FRONTEND dialog

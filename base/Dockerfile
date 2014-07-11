@@ -1,17 +1,24 @@
-FROM fedora:20
+FROM ubuntu:12.04
 MAINTAINER Aquarius Interactive <m@aquariusinteractive.com>
 
+ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /tmp
 
-RUN rpm -Uvh  http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-20.noarch.rpm
-RUN rpm -Uvh  http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-20.noarch.rpm
-RUN rpm -Uvh http://rpms.famillecollet.com/remi-release-20.rpm
+RUN sed -i "/^# deb .*partner/ s/^# //" /etc/apt/sources.list
+RUN echo "deb http://archive.ubuntu.com/ubuntu/ precise multiverse" >> /etc/apt/sources.list
+RUN apt-get -y install software-properties-common wget python-software-properties pkg-config
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
+RUN apt-get update
+RUN apt-get -y install htop bison re2c make binutils vim sudo man rubygems  python-pip
 
-RUN yum -y install drpmsync deltarpam gem mm
-RUN yum -y install libwebp-tools gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer gstreamer-rtsp gstreamer-ffmpeg gstreamer-tools
-RUN yum -y install ffmpeg ffmpeg-libs ImageMagick mencoder oggconvert oggvideotools ogmtools gd-progs
+RUN wget http://archive.getdeb.net/install_deb/getdeb-repository_0.1-1~getdeb1_all.deb
+RUN dpkg -i getdeb-repository_0.1-1~getdeb1_all.deb
+RUN rm -f /tmp/getdeb-repository_0.1-1~getdeb1_all.deb
+RUN add-apt-repository -y ppa:videolan/stable-daily
+RUN sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager
 
-RUN yum -y update
-RUN gem install flvtool2
+RUN apt-get update
+RUN apt-get -y upgrade
+RUN apt-get -y dist-upgrade
 
-RUN yum clean all
+ENV DEBIAN_FRONTEND dialog
