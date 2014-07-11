@@ -1,4 +1,4 @@
-FROM aquariusinteractive/dev-ubuntu-204
+FROM aquarius212/dev-ubuntu-204
 MAINTAINER Aquarius Interactive <m@aquariusinteractive.com>
 
 ENV DEBIAN_FRONTEND noninteractive

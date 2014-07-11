@@ -4,6 +4,8 @@ MAINTAINER Aquarius Interactive <m@aquariusinteractive.com>
 ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /tmp
 
+RUN apt-get install -y cmake 
+
 RUN wget http://www.cmake.org/files/v3.0/cmake-3.0.0.tar.gz
 RUN tar -xvf cmake-3.0.0.tar.gz
 WORKDIR cmake-3.0.0
