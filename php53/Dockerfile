@@ -1,5 +1,10 @@
 FROM aquarius212/ffmpeg
 MAINTAINER Michael Bishop <m@aquariusinteractive.com>
 
+RUN apt-get install -y bison wget
+RUN apt-mark hold php5
+
 WORKDIR /tmp
-RUN git clone https://github.com/php/php-src.git -b PHP-5.3.28
+RUN wget http://php.net/get/php-5.3.28.tar.bz2/from/a/mirror
+
+
