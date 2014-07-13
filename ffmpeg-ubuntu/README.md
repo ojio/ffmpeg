@@ -1,4 +1,4 @@
-# This builds off of a base Ubuntu 14.04 system and compiles ffmpeg and mplayer/mencoder from source.
+## This builds off of a base Ubuntu 14.04 system and compiles ffmpeg and mplayer/mencoder from source.
 
 ### FFMPEG is compiled with:
 
