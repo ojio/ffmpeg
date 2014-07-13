@@ -62,7 +62,7 @@ RUN cp ioncube_loader_lin_${PHP_VERSION}.so `php-config --extension-dir`
 RUN echo zend_extension=`php-config --extension-dir`/ioncube_loader_lin_${PHP_VERSION}.so > /etc/php5/conf.d/ioncube.ini
 
 WORKDIR /tmp
-RUN rm -rf /tmp/*
+RUN rm -rf *
 
 #Apache
 RUN echo "/usr/sbin/suexec2                                       root:root         0755" >> /etc/permissions
@@ -91,6 +91,7 @@ RUN augtool set /files/etc/php5/cli/php.ini/PHP/register_argc_argv on
 RUN sed -i "s/;error_log = log\/php-fpm.log/error_log=syslog/" /etc/php5/fpm/php-fpm.conf
 
 RUN zypper -n install memcached 
+RUN zypper -n rm git-web
 
 RUN chkstat --set --system
 
