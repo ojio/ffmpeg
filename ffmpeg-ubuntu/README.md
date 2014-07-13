@@ -1,6 +1,6 @@
 # This builds off of a base Ubuntu 14.04 system and compiles ffmpeg and mplayer/mencoder from source.
 
-## FFMPEG is compiled with:
+### FFMPEG is compiled with:
 
 ```
 configuration: --shlibdir=/usr/lib64 --prefix=/usr --mandir=/usr/share/man --libdir=/usr/lib64 --enable-static --extra-cflags='-fmessage-length=0 -grecord-gcc-switches -fstack-protector -O2 -Wall -D_FORTIFY_SOURCE=2 -funwind-tables -fasynchronous-unwind-tables -g -fPIC -I/usr/include/gsm' --enable-gpl --disable-x11grab --enable-version3 --enable-pthreads --enable-avfilter --enable-libpulse --enable-libvpx --enable-libopus --enable-libass --disable-libx265 --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libspeex --enable-libxvid --enable-libx264 --enable-libschroedinger --enable-libgsm --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-postproc --disable-libdc1394 --enable-librtmp --enable-libfreetype --enable-avresample --enable-libtwolame --enable-libvo-aacenc --enable-gnutls --enable-nonfree --enable-libfdk-aac --enable-libfaac --enable-libopenjpeg --enable-gray --enable-libwebp
@@ -15,7 +15,7 @@ configuration: --shlibdir=/usr/lib64 --prefix=/usr --mandir=/usr/share/man --lib
   libpostproc    52.  3.100 / 52.  3.100
 ```
 
-## and MPLAYER/MENCODER is set to query CPU capabilities at runtime to get something like:
+### and MPLAYER/MENCODER is set to query CPU capabilities at runtime to get something like:
 
 ```
 MPlayer SVN-r37239-4.8 (C) 2000-2014 MPlayer Team
