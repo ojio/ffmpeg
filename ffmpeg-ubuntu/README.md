@@ -2,7 +2,8 @@
 
 ## FFMPEG is compiled with:
 
-```  configuration: --shlibdir=/usr/lib64 --prefix=/usr --mandir=/usr/share/man --libdir=/usr/lib64 --enable-static --extra-cflags='-fmessage-length=0 -grecord-gcc-switches -fstack-protector -O2 -Wall -D_FORTIFY_SOURCE=2 -funwind-tables -fasynchronous-unwind-tables -g -fPIC -I/usr/include/gsm' --enable-gpl --disable-x11grab --enable-version3 --enable-pthreads --enable-avfilter --enable-libpulse --enable-libvpx --enable-libopus --enable-libass --disable-libx265 --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libspeex --enable-libxvid --enable-libx264 --enable-libschroedinger --enable-libgsm --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-postproc --disable-libdc1394 --enable-librtmp --enable-libfreetype --enable-avresample --enable-libtwolame --enable-libvo-aacenc --enable-gnutls --enable-nonfree --enable-libfdk-aac --enable-libfaac --enable-libopenjpeg --enable-gray --enable-libwebp
+```
+configuration: --shlibdir=/usr/lib64 --prefix=/usr --mandir=/usr/share/man --libdir=/usr/lib64 --enable-static --extra-cflags='-fmessage-length=0 -grecord-gcc-switches -fstack-protector -O2 -Wall -D_FORTIFY_SOURCE=2 -funwind-tables -fasynchronous-unwind-tables -g -fPIC -I/usr/include/gsm' --enable-gpl --disable-x11grab --enable-version3 --enable-pthreads --enable-avfilter --enable-libpulse --enable-libvpx --enable-libopus --enable-libass --disable-libx265 --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libspeex --enable-libxvid --enable-libx264 --enable-libschroedinger --enable-libgsm --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-postproc --disable-libdc1394 --enable-librtmp --enable-libfreetype --enable-avresample --enable-libtwolame --enable-libvo-aacenc --enable-gnutls --enable-nonfree --enable-libfdk-aac --enable-libfaac --enable-libopenjpeg --enable-gray --enable-libwebp
   libavutil      52. 92.100 / 52. 92.100
   libavcodec     55. 69.100 / 55. 69.100
   libavformat    55. 46.100 / 55. 46.100
@@ -16,7 +17,8 @@
 
 ## and MPLAYER/MENCODER is set to query CPU capabilities at runtime to get something like:
 
-``` MPlayer SVN-r37239-4.8 (C) 2000-2014 MPlayer Team
+```
+MPlayer SVN-r37239-4.8 (C) 2000-2014 MPlayer Team
 CPU vendor name: GenuineIntel  max cpuid level: 13
 CPU: Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz (Family: 6, Model: 62, Stepping: 4)
 extended cpuid-level: 8
