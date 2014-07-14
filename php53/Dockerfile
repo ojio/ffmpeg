@@ -22,8 +22,9 @@ RUN cat php.ini-production | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;
 RUN make install && make clean
 
 RUN cp php.ini-development /etc/php5/apache2/php.ini
+RUN ls `php-config --extension-dir`/*.so -1 | xargs -L1 -n1 basename |  xargs -n1 -I {} printf "extension=%s\n" {} >> /etc/php5/apache2/conf.d/extensions.ini
 
-RUN pecl config-set php_ini /etc/php5/apache2/php.ini && pear config-set php_ini /etc/php5/apache2/php.ini &&  pear upgrade --force && pear install PHP_Archive-0.11.4 &&  pecl install -a memcache && pecl install -a uploadprogress
+RUN pecl config-set php_ini /etc/php5/apache2/conf.d/extensions.ini && pear config-set php_ini /etc/php5/apache2/conf.d/extensions.ini &&  pear upgrade --force && pear install PHP_Archive-0.11.4 &&  pecl install -a memcache && pecl install -a uploadprogress
 
 
 #ioncube
@@ -36,6 +37,6 @@ RUN echo zend_extension=`php-config --extension-dir`/ioncube_loader_lin_${PHP_VE
 # Set some php ini variables
 ENV PHP_SERVER_INI /files/etc/php5/apache2/php.ini/PHP/
 RUN augtool touch ${PHP_SERVER_INI}/magic_quotes_gpc
-RUN augtool set ${PHP_SERVER_INI}/magic_quotes_gpc 1 && augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M && augtool set ${PHP_SERVER_INI}/post_max_size 500M && augtool set ${PHP_SERVER_INI}/max_execution_time 7200 && augtool set ${PHP_SERVER_INI}/max_input_time 7200 && augtool set ${PHP_SERVER_INI}/memory_limit 640M && augtool set ${PHP_SERVER_INI}/expose_php off && augtool set ${PHP_SERVER_INI}/include_path /usr/share/pear
+RUN augtool set ${PHP_SERVER_INI}/magic_quotes_gpc 1 && augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M && augtool set ${PHP_SERVER_INI}/post_max_size 500M && augtool set ${PHP_SERVER_INI}/max_execution_time 7200 && augtool set ${PHP_SERVER_INI}/max_input_time 7200 && augtool set ${PHP_SERVER_INI}/memory_limit 640M && augtool set ${PHP_SERVER_INI}/expose_php off && augtool set ${PHP_SERVER_INI}/include_path /usr/share/pear && augtool set /files//etc/php5/apache2/php.ini/Date/date.timezone America/New_York
 
 
