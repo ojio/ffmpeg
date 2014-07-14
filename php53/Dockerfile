@@ -46,5 +46,4 @@ ENV PHP_SERVER_INI /files/etc/php5/apache2/php.ini/PHP/
 RUN augtool touch ${PHP_SERVER_INI}/magic_quotes_gpc
 RUN augtool set ${PHP_SERVER_INI}/magic_quotes_gpc 1 && augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M && augtool set ${PHP_SERVER_INI}/post_max_size 500M && augtool set ${PHP_SERVER_INI}/max_execution_time 7200 && augtool set ${PHP_SERVER_INI}/max_input_time 7200 && augtool set ${PHP_SERVER_INI}/memory_limit 640M && augtool set ${PHP_SERVER_INI}/expose_php off && augtool set ${PHP_SERVER_INI}/include_path /usr/share/pear
 
-ENV PHP_SERVER_INI
 
