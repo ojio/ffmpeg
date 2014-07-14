@@ -1,7 +1,7 @@
 FROM aquarius212/ffmpeg
 MAINTAINER Michael Bishop <m@aquariusinteractive.com>
 
-RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev mysql-client apache2-dev apache2
+RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev mysql-client apache2-dev apache2 apache2-utils libapache2-mod-encoding libapache2-mod-spamhaus libapache2-mod-xsendfile 
 
 RUN apt-mark hold php5
 
