@@ -1,9 +1,9 @@
 FROM aquarius212/ffmpeg
 MAINTAINER Michael Bishop <m@aquariusinteractive.com>
 
-RUN apt-get install -y bison wget 
-RUN apt-get install -y libcrypto++-dev libcrypto++-utils libcrypto++9 libssl-dev libpcre3-dev libpcre++-dev libpcre3 libpcrecpp0 libbz2-dev libcurl4-openssl-dev libxpm-dev libfreetype6-dev libfreetype6 t1lib-bin libt1-dev t1utils libmcrypt4 libmcrypt-dev libtomcrypt-dev libtomcrypt0 mcrypt
-RUN apt-get install -y libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev
+RUN apt-get install -y -qq bison wget 
+RUN apt-get install -y -qq libcrypto++-dev libcrypto++-utils libcrypto++9 libssl-dev libpcre3-dev libpcre++-dev libpcre3 libpcrecpp0 libbz2-dev libcurl4-openssl-dev libxpm-dev libfreetype6-dev libfreetype6 t1lib-bin libt1-dev t1utils libmcrypt4 libmcrypt-dev libtomcrypt-dev libtomcrypt0 mcrypt
+RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev
 RUN apt-mark hold php5
 
 # PHP 5.3 Cannot find several multiarch headers/libraries
