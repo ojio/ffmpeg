@@ -37,4 +37,6 @@ RUN augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M && augtool set ${PHP_
 
 RUN a2dismod mpm_event && a2enmod mpm_prefork
 
+ADD php.conf /etc/apache2/conf-enabled/
+
 CMD apache2ctl -D FOREGROUND
