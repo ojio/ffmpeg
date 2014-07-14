@@ -36,7 +36,7 @@ RUN pecl install -a uploadprogress
 
 #ioncube
 WORKDIR /tmp
-RUN wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.bz2 -O ioncube.tar.bz2 && tar -xf ioncube.tar.bz2
+RUN wget -q http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.bz2 -O ioncube.tar.bz2 && tar -xf ioncube.tar.bz2
 WORKDIR ioncube 
 RUN cp ioncube_loader_lin_${PHP_VERSION}.so `php-config --extension-dir`
 RUN echo zend_extension=`php-config --extension-dir`/ioncube_loader_lin_${PHP_VERSION}.so > /etc/php5/apache2/conf.d/00-ioncube.ini
