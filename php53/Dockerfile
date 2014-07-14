@@ -6,6 +6,7 @@ RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-de
 
 # PHP 5.3 Cannot find several multiarch headers/libraries
 RUN ln -s /usr/lib/x86_64-linux-gnu/libXpm.so /usr/lib64/libXpm.so && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && ldconfig
+RUN mkdir /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
 
 ENV PHP_VERSION 5.3
 WORKDIR /tmp
