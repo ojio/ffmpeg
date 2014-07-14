@@ -5,7 +5,7 @@ MAINTAINER Michael Bishop <m@aquariusinteractive.com>
  
 RUN apt-get update
 
-RUN apt-get install -y -qq subversion make cmake git gcc-4.8 gcc-4.8-doc gfortran-4.8 gfortran-4.8-doc cpp-4.8 cpp-4.8-doc  g++-4.8 yasm autoconf automake nasm libtool vim augeas-tools augeas-lenses augeas-doc curl software-properties-common python-software-properties bison wget re2c lemon
+RUN apt-get install -y -qq subversion make cmake git gcc-4.8 gcc-4.8-doc gfortran-4.8 gfortran-4.8-doc cpp-4.8 cpp-4.8-doc  g++-4.8 yasm autoconf automake nasm libtool vim augeas-tools augeas-lenses augeas-doc curl software-properties-common python-software-properties bison wget re2c lemon ruby
 
 RUN add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty universe multiverse" && add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe multiverse"
 
@@ -31,4 +31,6 @@ WORKDIR mplayer
 RUN ./configure && make -j2 install && make clean
 
 WORKDIR /tmp
+
+gem install flvtool2
 
