@@ -20,8 +20,13 @@ WORKDIR php-5.3.28
 RUN CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -fsigned-char -fno-strict-aliasing -gstabs -march=native -mtune=native" ./configure --build=x86_64-linux-gnu --host=x86_64-linux-gnu --program-prefix= --prefix=/usr --exec-prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin --sysconfdir=/etc --datadir=/usr/share --includedir=/usr/include --libdir=/usr/lib64 --libexecdir=/usr/libexec --localstatedir=/var --sharedstatedir=/var/lib --mandir=/usr/share/man --infodir=/usr/share/info --cache-file=../config.cache --with-libdir=lib64 --with-config-file-path=/etc/php5/apache2 --with-config-file-scan-dir=/etc/php5/apache2/conf.d --disable-debug --with-pic --disable-rpath --with-exec-dir=/usr/bin --with-png-dir=/usr --enable-gd-native-ttf --with-t1lib=/usr --without-gdbm --with-jpeg-dir=/usr --with-openssl --with-pcre-regex --with-zlib --with-layout=GNU --with-kerberos --with-libxml-dir=/usr  --with-mhash  --libdir=/usr/lib64/php --enable-pcntl  --enable-mbstring=shared --enable-mbregex --enable-calendar=shared --enable-bcmath=shared --with-bz2=static --enable-ctype=shared --enable-exif=shared --enable-ftp=shared --with-gettext=shared --with-iconv=shared --enable-sockets=shared --enable-tokenizer=shared --with-xmlrpc=shared  --enable-mysqlnd=shared --with-mysql=shared,mysqlnd --with-mysqli=shared,mysqlnd --with-mysql-sock=/var/lib/mysql/mysql.sock --enable-dom=shared  --enable-simplexml=shared --enable-xml  --enable-soap=shared --with-xsl=shared,/usr --enable-xmlreader=shared --enable-xmlwriter=shared --with-curl=static --enable-pdo=shared  --with-pdo-mysql=shared,mysqlnd  --without-readline --with-libedit --enable-phar=static --with-mcrypt=shared,/usr --with-tidy=shared,/usr  --enable-sysvmsg=static --enable-sysvshm=static --enable-sysvsem=static --enable-shmop=static --enable-posix=static  --enable-fileinfo=shared --enable-intl=shared --with-icu-dir=/usr --with-enchant=shared,/usr --with-pear --with-xpm-dir=/usr --with-gd --with-gmp=shared --with-libdir=lib64 --enable-session=static --enable-pdo=static --with-apxs2 --with-regex=php
 
 RUN mkdir -p /etc/php5/apache2/
-RUN make -j4 && make install
+RUN make -j4 
+RUN cat php.ini-production | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$/ pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,/g;' > php.ini-production
+
+RUN make install
 #RUN make clean
+
+RUN cp php.ini-development /etc/php5/apache2/php.ini
 
 RUN pecl config-set php_ini /etc/php5/apache2/php.ini
 RUN pear config-set php_ini /etc/php5/apache2/php.ini
@@ -31,7 +36,17 @@ RUN pecl install -a memcache
 RUN pecl install -a uploadprogress
 
 ENV PHP_SERVER_INI /files/etc/php5/apache2/php.ini/PHP/
+RUN augtool touch ${PHP_SERVER_INI}/magic_quotes_gpc
+RUN augtool set ${PHP_SERVER_INI}/magic_quotes_gpc 1
+RUN augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M
+RUN augtool set ${PHP_SERVER_INI}/post_max_size 500M
+RUN augtool set ${PHP_SERVER_INI}/max_execution_time 7200
+RUN augtool set ${PHP_SERVER_INI}/max_input_time 7200
+RUN augtool set ${PHP_SERVER_INI}/memory_limit 640M
+RUN augtool set ${PHP_SERVER_INI}/expose_php off
+#RUN augtool get /files/etc/php5/apache2/php.ini/PHP/include_path 
+#RUN augtool set /files/etc/php5/apache2/php.ini/PHP/include_path /usr/share/pear
 
-RUN CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -fsigned-char -fno-strict-aliasing -gstabs -march=native -mtune=native" env
+
 
 
