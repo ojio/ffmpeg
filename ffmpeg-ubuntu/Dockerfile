@@ -19,7 +19,7 @@ RUN apt-get install -y -qq libvpx-dev vpx-tools libfaad-dev libfaac-dev libopus-
 WORKDIR /tmp
 RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 WORKDIR ffmpeg
-RUN CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -fsigned-char -fno-strict-aliasing -gstabs" ./configure --shlibdir=/usr/lib64 --prefix=/usr --mandir=/usr/share/man --libdir=/usr/lib64 --enable-static --extra-cflags='-fmessage-length=0 -grecord-gcc-switches -fstack-protector -O2 -Wall -D_FORTIFY_SOURCE=2 -funwind-tables -fasynchronous-unwind-tables -g -fPIC -I/usr/include/gsm' --enable-gpl --disable-x11grab --enable-version3 --enable-pthreads --enable-avfilter --enable-libpulse --enable-libvpx --enable-libopus --enable-libass --disable-libx265 --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libspeex --enable-libxvid --enable-libx264 --enable-libschroedinger --enable-libgsm --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-postproc --disable-libdc1394 --enable-librtmp --enable-libfreetype --enable-avresample --enable-libtwolame --enable-libvo-aacenc --enable-gnutls --enable-nonfree --enable-libfdk-aac --enable-libfaac --enable-libopenjpeg --enable-gray --enable-libwebp && make -j4 install && make install-data && make clean
+RUN ./configure --shlibdir=/usr/lib64 --prefix=/usr --mandir=/usr/share/man --libdir=/usr/lib64 --enable-static --extra-cflags='-fmessage-length=0 -grecord-gcc-switches -fstack-protector -O2 -Wall -D_FORTIFY_SOURCE=2 -funwind-tables -fasynchronous-unwind-tables -g -fPIC -I/usr/include/gsm' --enable-gpl --disable-x11grab --enable-version3 --enable-pthreads --enable-avfilter --enable-libpulse --enable-libvpx --enable-libopus --enable-libass --disable-libx265 --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libspeex --enable-libxvid --enable-libx264 --enable-libschroedinger --enable-libgsm --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-postproc --disable-libdc1394 --enable-librtmp --enable-libfreetype --enable-avresample --enable-libtwolame --enable-libvo-aacenc --enable-gnutls --enable-nonfree --enable-libfdk-aac --enable-libfaac --enable-libopenjpeg --enable-gray --enable-libwebp && make -j4 install && make install-data && make clean
 
 WORKDIR tools
 RUN gcc qt-faststart.c -o qt-faststart && mv qt-faststart /usr/local/bin
@@ -29,7 +29,7 @@ RUN gcc qt-faststart.c -o qt-faststart && mv qt-faststart /usr/local/bin
 WORKDIR /tmp
 RUN svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer
 WORKDIR mplayer
-RUN CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -fsigned-char -fno-strict-aliasing -gstabs" ./configure && make -j2 install && make clean
+RUN ./configure && make -j2 install && make clean
 
 WORKDIR /tmp
 
