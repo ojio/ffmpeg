@@ -1,8 +1,6 @@
 FROM aquarius212/ffmpeg
 MAINTAINER Michael Bishop <m@aquariusinteractive.com>
 
-#RUN apt-get install -y -qq bison wget 
-#RUN apt-get install -y -qq libcrypto++-dev libcrypto++-utils libcrypto++9 libssl-dev libpcre3-dev libpcre++-dev libpcre3 libpcrecpp0 libbz2-dev libcurl4-openssl-dev libxpm-dev libfreetype6-dev libfreetype6 t1lib-bin libt1-dev t1utils libmcrypt4 libmcrypt-dev libtomcrypt-dev libtomcrypt0 mcrypt libgmp-dev libgmp3-dev
 RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev mysql-client apache2-dev apache2
 
 RUN apt-mark hold php5
@@ -21,10 +19,10 @@ RUN CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat
 
 RUN mkdir -p /etc/php5/apache2/
 RUN make -j4 
+
 RUN cat php.ini-production | tr "\t" " " | sed -e'/short_open_tag =/ s/Off/On/g;/session.gc_probability =/ s/1/0/g;/disable_functions =/ s/$/ pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,/g;' > php.ini-production
 
-RUN make install
-#RUN make clean
+RUN make install && make clean
 
 RUN cp php.ini-development /etc/php5/apache2/php.ini
 
