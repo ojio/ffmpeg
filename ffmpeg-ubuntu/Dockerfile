@@ -1,4 +1,5 @@
-FROM ubuntu:14.04
+#FROM ubuntu:14.04
+FROM phusion/baseimage:latest
 
 MAINTAINER Michael Bishop <m@aquariusinteractive.com>
  
