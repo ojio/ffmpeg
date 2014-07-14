@@ -32,5 +32,5 @@ RUN ./configure && make -j2 install && make clean
 
 WORKDIR /tmp
 
-gem install flvtool2
+RUN gem install flvtool2
 
