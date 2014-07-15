@@ -42,7 +42,7 @@ ADD php.conf /etc/apache2/conf-enabled/
 
 RUN apt-get install -y memcached
 
-ADD crontab
+ADD crontab /tmp/
 
 RUN crontab crontab
 
