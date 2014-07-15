@@ -4,6 +4,6 @@ MAINTAINER Michael Bishop <m@aquariusinteractive.com>
  
 RUN apt-get update &&  apt-get -y upgrade && apt-get -y dist-upgrade && apt-get -y install memcached
 
-CMD memcached
+CMD memcached -u memcached
 
 
