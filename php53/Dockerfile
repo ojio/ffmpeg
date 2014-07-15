@@ -1,7 +1,7 @@
 FROM aquarius212/ffmpeg
 MAINTAINER Michael Bishop <m@aquariusinteractive.com>
 
-RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev mysql-client apache2-dev apache2 apache2-utils libapache2-mod-encoding libapache2-mod-spamhaus libapache2-mod-xsendfile && apt-mark hold php5
+RUN apt-get install -y -qq libenchant-dev libsqlite0-dev libenchant-dev libgd-dev libxpm4  icu-devtools libicu-dev libicu52 libedit-dev libedit2 libtidy-dev mysql-client apache2-dev apache2 apache2-utils libapache2-mod-encoding libapache2-mod-spamhaus libapache2-mod-xsendfile memcached && apt-mark hold php5
 
 
 # PHP 5.3 Cannot find several multiarch headers/libraries
@@ -34,13 +34,12 @@ RUN echo zend_extension=`php-config --extension-dir`/ioncube_loader_lin_${PHP_VE
 
 # Set some php ini variables
 ENV PHP_SERVER_INI /files/etc/php5/apache2/php.ini/PHP/
-RUN augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M && augtool set ${PHP_SERVER_INI}/post_max_size 500M && augtool set ${PHP_SERVER_INI}/max_execution_time 7200 && augtool set ${PHP_SERVER_INI}/max_input_time 7200 && augtool set ${PHP_SERVER_INI}/memory_limit 640M && augtool set ${PHP_SERVER_INI}/expose_php off && augtool set ${PHP_SERVER_INI}/include_path /usr/share/pear && augtool set /files//etc/php5/apache2/php.ini/Date/date.timezone America/New_York
+RUN augtool set ${PHP_SERVER_INI}/upload_max_filesize 500M && augtool set ${PHP_SERVER_INI}/post_max_size 500M && augtool set ${PHP_SERVER_INI}/max_execution_time 7200 && augtool set ${PHP_SERVER_INI}/max_input_time 7200 && augtool set ${PHP_SERVER_INI}/memory_limit 640M && augtool set ${PHP_SERVER_INI}/expose_php off && augtool set ${PHP_SERVER_INI}/short_open_tag on && augtool set ${PHP_SERVER_INI}/include_path /usr/share/pear && augtool set /files//etc/php5/apache2/php.ini/Date/date.timezone America/New_York
 
-RUN a2dismod mpm_event && a2enmod mpm_prefork
+RUN a2dismod mpm_event && a2enmod mpm_prefork && a2enmod rewrite
 
 ADD php.conf /etc/apache2/conf-enabled/
-
-RUN apt-get install -y memcached
+ADD apache.conf /etc/apache2/sites-available/000-default.conf
 
 ADD crontab /tmp/
 
