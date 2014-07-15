@@ -1,0 +1,2 @@
+*/2 * * * * /usr/bin/php -q /var/www/html/stp/admin/threads.php > /dev/null 2>&1
+* * * * * /usr/bin/php -q /var/www/html/stp/admin/cron.php > /dev/null 2>&1

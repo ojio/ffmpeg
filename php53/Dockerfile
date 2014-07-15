@@ -42,4 +42,8 @@ ADD php.conf /etc/apache2/conf-enabled/
 
 RUN apt-get install -y memcached
 
-CMD memcahed -d -u memcache && apache2ctl -D FOREGROUND
+ADD crontab
+
+RUN crontab crontab
+
+CMD cron && /usr/bin/memcached -d -u memcache && apache2ctl -D FOREGROUND
