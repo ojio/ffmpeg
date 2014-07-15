@@ -40,4 +40,6 @@ RUN a2dismod mpm_event && a2enmod mpm_prefork
 
 ADD php.conf /etc/apache2/conf-enabled/
 
-CMD apache2ctl -D FOREGROUND
+RUN apt-get install -y memcached
+
+CMD memcahed -d -u memcache && apache2ctl -D FOREGROUND
